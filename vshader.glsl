@@ -1,15 +1,38 @@
 #version 130
 
-uniform mat4 Matrix;
-uniform mat4 viewMatrix;
-uniform mat4 modelMatrix;
+//uniform mat4 Matrix;
+//uniform mat4 viewMatrix;
+//uniform mat4 modelMatrix;
 
-in vec3 in_position;
+uniform vec3 rotate;
 
-in vec4 in_color;
-out vec4 pass_color;
+in vec3 position;
+
+//in vec4 in_color;
+out vec4 inColor;
 
 void main(){
-  gl_Position=Matrix*viewMatrix*modelMatrix*vec4(in_position,1.0); 
-  pass_color=in_color;
+	vec3 rot = radians(rotate);
+	vec3 c = cos(rot);
+	vec3 s = sin(rot);
+
+	mat4 rx = mat4( 1.0, 0.0, 0.0, 0.0,
+			0.0, c.x, s.x, 0.0,
+			0.0,-s.x, c.x, 0.0,
+			0.0, 0.0, 0.0, 1.0); 
+
+	mat4 ry = mat4( c.y, 0.0,-s.y, 0.0,
+			0.0, 1.0, 0.0, 0.0,
+			s.y, 0.0, c.y, 0.0,
+			0.0, 0.0, 0.0, 1.0); 
+
+	mat4 rz = mat4( c.z,-s.z, 0.0, 0.0,
+			s.z, c.z, 0.0, 0.0,
+			0.0, 0.0, 1.0, 0.0,
+			0.0, 0.0, 0.0, 1.0); 
+
+	gl_Position = rz * ry * rx * vec4(position, 1.0); 
+//	gl_Position = rotate * vec4(in_position, 1.0); 
+//	gl_Position=Matrix*viewMatrix*modelMatrix*vec4(in_position,1.0); 
+	inColor = vec4(position.x + 0.5, position.y + 0.5, position.z + 0.5, 1.0);
 }
