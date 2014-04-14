@@ -22,7 +22,15 @@ typedef struct {
 	float z;
 } angle_t;
 
+typedef struct {
+	float x;
+	float y;
+} pos_t;
+
 angle_t rotation = {0};
+pos_t pos = {0};
+float scale = 1;
+
 
 void init(void)
 {
@@ -34,20 +42,35 @@ void init(void)
 
 	glUseProgram(prog);
 	glEnable(GL_DEPTH_TEST);
+
+//	pos.x = 0.5f;
+//	pos.y = 0.5f;
 }
 
 
 // TODO: Write this
 void on_key(unsigned char key, int x, int y)
 {
-	printf("c: %c, x: %d, y: %d\n",key,x,y);
 	switch(key) {
-		case 'a': rotation.x += step; break;
-		case 'd': rotation.x -= step; break;
-		case 'w': rotation.y += step; break;
-		case 's': rotation.y -= step; break;
-		case 'q': rotation.z += step; break;
-		case 'e': rotation.z -= step; break;
+		
+		// Rotation
+		case 'h': rotation.x += step; break;
+		case 'l': rotation.x -= step; break;
+		case 'j': rotation.y += step; break;
+		case 'k': rotation.y -= step; break;
+		case 'u': rotation.z += step; break;
+		case 'm': rotation.z -= step; break;
+	
+		// Translation
+		case 'w': pos.y += 0.1; break;
+		case 's': pos.y -= 0.1; break;
+		case 'a': pos.x -= 0.1; break;
+		case 'd': pos.x += 0.1; break;
+
+		// Scale
+		case 'q': scale -= 0.1; break;
+		case 'e': scale += 0.1; break;
+
 	}
 	glutPostRedisplay();
 }
@@ -55,6 +78,7 @@ void on_key(unsigned char key, int x, int y)
 void show_stuff(void)
 {
 	int vaoID, vertBuf, elemBuf;
+	int rot_pos, pos_pos, sca_pos;
 	// DO OBJECT STUFF HERE
 	/*GLfloat vertices[3*8] = {
 		-0.5f,-0.5f,0.5f,
@@ -91,11 +115,11 @@ void show_stuff(void)
 	};*/
 
 	GLfloat vertices[3*5] = {
-		-0.5f,-0.5f, 0.5f,
-		-0.5f,-0.5f,-0.5f,
-		 0.5f,-0.5f,-0.5f,
-		 0.5f,-0.5f, 0.5f,
-		 0.0f, 0.5f, 0.0f
+		-1.0f,-1.0f, 1.0f,
+		-1.0f,-1.0f,-1.0f,
+		 1.0f,-1.0f,-1.0f,
+		 1.0f,-1.0f, 1.0f,
+		 0.0f, 1.0f, 0.0f
 	};
 
 	GLuint indices[3*6] = {
@@ -110,7 +134,23 @@ void show_stuff(void)
 		3,4,0
 	};
 
-	glUniform3fv(0,1,&rotation);
+
+	rot_pos = glGetUniformLocation(prog,"rotate");
+	pos_pos = glGetUniformLocation(prog,"pos");
+	sca_pos = glGetUniformLocation(prog,"scale");
+
+	if (-1 == rot_pos)
+		printf("Warning: rotate not found in shader\n");
+	if (-1 == pos_pos)
+		printf("Warning: position not found in shader\n");
+	if (-1 == sca_pos)
+		printf("Warning: scale not found in shader\n");
+
+
+	glUniform3fv(rot_pos,1,&rotation);
+	glUniform2fv(pos_pos,1,&pos);
+	glUniform1fv(sca_pos,1,&scale);
+
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
