@@ -23,15 +23,15 @@ void main(){
 					0.0,-s.x, c.x, 0.0,
 					0.0, 0.0, 0.0, 1.0)); 
 
-	mat4 ry = mat4( c.y, 0.0,-s.y, 0.0,
+	mat4 ry = transpose(mat4( c.y, 0.0,-s.y, 0.0,
 					0.0, 1.0, 0.0, 0.0,
 					s.y, 0.0, c.y, 0.0,
-					0.0, 0.0, 0.0, 1.0); 
+					0.0, 0.0, 0.0, 1.0)); 
 
-	mat4 rz = mat4( c.z,-s.z, 0.0, 0.0,
+	mat4 rz = transpose(mat4( c.z,-s.z, 0.0, 0.0,
 					s.z, c.z, 0.0, 0.0,
 					0.0, 0.0, 1.0, 0.0,
-					0.0, 0.0, 0.0, 1.0); 
+					0.0, 0.0, 0.0, 1.0)); 
 
 	mat4 rotation = rz * ry * rx;
 	mat4 translation = transpose(mat4(1.0, 0.0, 0.0, pos.x,
